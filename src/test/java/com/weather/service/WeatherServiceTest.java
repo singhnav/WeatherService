@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyString;
@@ -33,17 +34,11 @@ public class WeatherServiceTest {
 
     @Test
     public void validResponseFromWeatherServer() throws Exception {
-        WeatherSummary valid = new WeatherSummary();
-        valid.main = new Main();
-        valid.main.temp = "21";
-        valid.sys = new Sys();
-        valid.sys.sunrise = "1467258452";
-        valid.sys.sunset = "1467318054";
-        Weather weather = new Weather();
-        weather.description = "cloudy";
-        valid.weather = new ArrayList<Weather>() {{
-            add(weather);
-        }};
+        Main main = new Main("21");
+        Sys sys = new Sys("1467258452", "1467318054");
+        Weather weather = new Weather("cloudy");
+
+        WeatherSummary valid = new WeatherSummary(Arrays.asList(weather), main, sys);
 
         when(restTemplate.getForObject(anyString(), eq(WeatherSummary.class))).thenReturn(valid);
 
@@ -60,7 +55,7 @@ public class WeatherServiceTest {
 
     @Test(expected = WeatherException.class)
     public void invalidResponseFromWeatherServer() throws Exception {
-        WeatherSummary invalid = new WeatherSummary();
+        WeatherSummary invalid = new WeatherSummary(null, null, null);
         when(restTemplate.getForObject(anyString(), eq(WeatherSummary.class))).thenReturn(invalid);
         weatherService.getWeatherForCity("London");
     }
