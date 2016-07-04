@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<body>
+<div ng-app="myApp" ng-controller="myCtrl">
+    <h1>Show the weather for</h1>
+    <input type="text" ng-model="city">
+    <input type="button" value="Load Weather" ng-click="call()">
+
+    <div>{{error}}</div>
+
+
+    <div ng-if="result">
+        <h2>Latest weather is:</h2>
+        <table>
+            <tr>
+                <td>City</td>
+                <td>{{result.city}}</td>
+            </tr>
+            <tr>
+                <td>Date</td>
+                <td>{{result.dateNow}}</td>
+            </tr>
+            <tr>
+                <td>Temperature in Celsius</td>
+                <td>{{result.temperatureCelsius}}</td>
+            </tr>
+            <tr>
+                <td>Temperature in Fahrenheit</td>
+                <td>{{result.temperatureFahrenheit}}</td>
+            </tr>
+            <tr>
+                <td>Weather Description</td>
+                <td>{{result.weatherDescription}}</td>
+            </tr>
+            <tr>
+                <td>Sunrise Time</td>
+                <td>{{result.sunriseAsText}}</td>
+            </tr>
+            <tr>
+                <td>Sunset Time</td>
+                <td>{{result.sunsetAsText}}</td>
+            </tr>
+
+        </table>
+        <h2></h2>
+    </div>
+</div>
+
+<script>
+    var app = angular.module('myApp', []);
+    app.controller('myCtrl', function ($scope, $http) {
+        $scope.call = function () {
+            $scope.result = null
+            $scope.error = null
+            $http.get("/show/" + $scope.city)
+                    .success(function (data, status, headers, config) {
+                        $scope.result = data;
+                    }).error(function (data, status, headers, config) {
+                        $scope.error = data
+                    });
+        }
+    });
+</script>
+
+</body>
+</html>
